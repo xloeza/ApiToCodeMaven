@@ -1,8 +1,4 @@
 package com.nearsoft;
-
-import org.codehaus.jackson.map.ObjectMapper;
-
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -10,11 +6,13 @@ import java.util.Map;
  * Created by xloeza on 10/18/16.
  */
 public class ApiClient {
+
+    private static final String DEFAULT_URL = "https://api.nasa.gov";
+    private static final String DEFAULT_END_POINT = "/planetary/apod";
+
     public JavaInfo GetJavaInfo(String api_key) throws Exception {
-        String baseUrl="https://api.nasa.gov";
-        String endPoint="/planetary/apod";
-        GenericApiCall.HttpVerbs method = GenericApiCall.HttpVerbs.GET;
-        GenericApiCall apiCall = new GenericApiCall(baseUrl, "", "");
+        HttpVerbs method = HttpVerbs.GET;
+        GenericApiCall apiCall = new GenericApiCall(DEFAULT_URL, "", "");
         String body = "";
         Map<String, String> headers = new HashMap<>();
         Map<String, String> parameters = new HashMap<>();
@@ -22,16 +20,12 @@ public class ApiClient {
 
         parameters.put("api_key", api_key);
 
-        String json = apiCall.Request(method, endPoint, headers, parameters, queryParameters, body);
+        String json = apiCall.Request(method, DEFAULT_END_POINT, headers, parameters, queryParameters, body);
 
 
-        JavaInfo res  = fromJsonToObject(json, JavaInfo.class);
+        JavaInfo res = JsonUtil.fromJsonToObject(json, JavaInfo.class);
 
         return res;
     }
 
-    public static <T> T fromJsonToObject(String json, Class<T> clazz) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        return mapper.readValue(json, clazz);
-    }
 }
